@@ -9,9 +9,8 @@ setInterval(function() {
   $('#currentTime').text("Current time: " + time);
 }, 1000);
 
-createTimeBlocks()
-
-
+//run function to create time blocks
+createTimeBlocks();
 // define function to create time blocks
 function createTimeBlocks() {
 
@@ -51,7 +50,31 @@ function createTimeBlocks() {
 
       // Add the time-block element to the page
       document.querySelector("#time-blocks").appendChild(timeBlockEl);
-  }
+  }};
 
 
-}});
+    //set colour of timeblocks according to currentHr
+    //define currentHr
+    var currentHr = dayjs().hour();
+    var timeBlock = document.querySelector(".time-block")
+
+    timeBlock.forEach(function(timeBlock) {
+        
+      //get hour of the timeBlock by splitting hour- from id on timeBlock
+      var timeBlockHr = parseInt(timeBlock.getAttribute("id").split("hour-")[1]);
+
+      // add present class is timeBlockHr equals currentHr
+      if (timeBlockHr === currentHr) {
+          timeBlock.classList.add("present");
+      }
+      // add past class is timeBlockHr is less than the currentHr
+      else if (timeBlockHr < currentHr) {
+          timeBlock.classList.add("past");
+      }
+      // add future class otherwise
+      else {
+          timeBlock.classList.add("future");
+      }
+    });
+
+});
