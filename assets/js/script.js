@@ -56,20 +56,22 @@ function createTimeBlocks() {
     //set colour of timeblocks according to currentHr
     //define currentHr
     var currentHr = dayjs().hour();
-    var timeBlock = document.querySelector(".time-block")
+    console.log(currentHr);
 
-    timeBlock.forEach(function(timeBlock) {
+    var timeBlocks = document.querySelectorAll(".time-block")
+
+    timeBlocks.forEach(function(timeBlock) {
         
       //get hour of the timeBlock by splitting hour- from id on timeBlock
       var timeBlockHr = parseInt(timeBlock.getAttribute("id").split("hour-")[1]);
 
       // add present class is timeBlockHr equals currentHr
-      if (timeBlockHr === currentHr) {
-          timeBlock.classList.add("present");
+      if (timeBlockHr < currentHr) {
+          timeBlock.classList.add("past");
       }
       // add past class is timeBlockHr is less than the currentHr
-      else if (timeBlockHr < currentHr) {
-          timeBlock.classList.add("past");
+      else if (timeBlockHr === currentHr) {
+          timeBlock.classList.add("present");
       }
       // add future class otherwise
       else {
