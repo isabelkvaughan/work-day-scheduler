@@ -9,8 +9,11 @@ setInterval(function() {
   $('#currentTime').text("Current time: " + time);
 }, 1000);
 
+
+
 //run function to create time blocks
 createTimeBlocks();
+
 // define function to create time blocks
 function createTimeBlocks() {
 
@@ -48,6 +51,21 @@ function createTimeBlocks() {
       saveBtn.appendChild(saveIcon);
       timeBlockEl.appendChild(saveBtn);
 
+    // add event listener to saveBtn to save input to localStorage
+    saveBtn.addEventListener("click", function() {
+      // Get the text from the textInput
+      var textInputValue = textInput.value;
+
+      // Save the text to localStorage
+      localStorage.setItem("hour-" + hour, textInputValue);
+
+      // Get the saved text from localStorage
+      var savedText = localStorage.getItem("hour-" + hour);
+
+      // Set the text of the textInput to the saved text
+      textInput.value = savedText;
+    });
+
       // Add the time-block element to the page
       document.querySelector("#time-blocks").appendChild(timeBlockEl);
   }};
@@ -58,25 +76,29 @@ function createTimeBlocks() {
     var currentHr = dayjs().hour();
     console.log(currentHr);
 
+    // selected all elements with class time-block
     var timeBlocks = document.querySelectorAll(".time-block")
 
+    // for each time block, run function on timeBlock
     timeBlocks.forEach(function(timeBlock) {
         
       //get hour of the timeBlock by splitting hour- from id on timeBlock
       var timeBlockHr = parseInt(timeBlock.getAttribute("id").split("hour-")[1]);
 
       // add present class is timeBlockHr equals currentHr
-      if (timeBlockHr < currentHr) {
-          timeBlock.classList.add("past");
+      if (timeBlockHr === currentHr) {
+          timeBlock.classList.add("present");
       }
       // add past class is timeBlockHr is less than the currentHr
-      else if (timeBlockHr === currentHr) {
-          timeBlock.classList.add("present");
+      else if (timeBlockHr < currentHr) {
+          timeBlock.classList.add("past");
       }
       // add future class otherwise
       else {
           timeBlock.classList.add("future");
       }
     });
+
+      
 
 });
