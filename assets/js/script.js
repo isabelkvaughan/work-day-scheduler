@@ -99,6 +99,20 @@ function createTimeBlocks() {
       }
     });
 
-      
+    function saveText(event) {
+      var textInput = event.target.previousSibling;
+      var textInputValue = textInput.value;
+      var timeBlockId = event.target.parentNode.getAttribute("id");
+      localStorage.setItem(timeBlockId, textInputValue);
+      var savedText = localStorage.getItem(timeBlockId);
+      textInput.value = savedText;
+    }
+    
+    document.querySelector("#time-blocks").addEventListener("click", function(event) {
+      if (event.target.matches(".saveBtn")) {
+        saveText(event);
+      }
+    });
+    
 
 });
