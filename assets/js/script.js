@@ -9,8 +9,6 @@ setInterval(function() {
   $('#currentTime').text("Current time: " + time);
 }, 1000);
 
-
-
 //run function to create time blocks
 createTimeBlocks();
 
@@ -23,96 +21,86 @@ function createTimeBlocks() {
 
   // loop through hours to create individual time blocks
   for (var hour = startHr; hour <= endHr; hour++) {
-      
-      //create timeBlockEl
-      var timeBlockEl = document.createElement("div");
-      timeBlockEl.setAttribute("id", "hour-" + hour);
-      timeBlockEl.classList.add("row", "time-block");
+    //create timeBlockEl
+    var timeBlockEl = document.createElement("div");
+    timeBlockEl.setAttribute("id", "hour-" + hour);
+    timeBlockEl.classList.add("row", "time-block");
 
-      // add hourEl and append to timeBlock
-      var hourEl = document.createElement("div");
-      hourEl.classList.add("col-2", "col-md-1", "hour", "text-center", "py-3");
-      hourEl.textContent = hour <= 12 ? hour + "AM" : hour - 12 + "PM";
-      timeBlockEl.appendChild(hourEl);
+    // add hourEl and append to timeBlock
+    var hourEl = document.createElement("div");
+    hourEl.classList.add("col-2", "col-md-1", "hour", "text-center", "py-3");
+    hourEl.textContent = hour <= 12 ? hour + "AM" : hour - 12 + "PM";
+    timeBlockEl.appendChild(hourEl);
 
-      // add textInput and append to timeBlock
-      var textInput = document.createElement("textarea");
-      textInput.classList.add("col-8", "col-md-10", "description");
-      textInput.setAttribute("rows", "3");
-      timeBlockEl.appendChild(textInput);
+    // add textInput and append to timeBlock
+    var textInput = document.createElement("textarea");
+    textInput.classList.add("col-8", "col-md-10", "description");
+    textInput.setAttribute("rows", "3");
+    timeBlockEl.appendChild(textInput);
 
-      // add saveBtn and append to timeBlock
-      var saveBtn = document.createElement("button");
-      saveBtn.classList.add("btn", "saveBtn", "col-2", "col-md-1");
-      saveBtn.setAttribute("aria-label", "save");
-      var saveIcon = document.createElement("i");
-      saveIcon.classList.add("fas", "fa-save");
-      saveIcon.setAttribute("aria-hidden", "true");
-      saveBtn.appendChild(saveIcon);
-      timeBlockEl.appendChild(saveBtn);
+    // add saveBtn and append to timeBlock
+    var saveBtn = document.createElement("button");
+    saveBtn.classList.add("btn", "saveBtn", "col-2", "col-md-1");
+    saveBtn.setAttribute("aria-label", "save");
+    var saveIcon = document.createElement("i");
+    saveIcon.classList.add("fas", "fa-save");
+    saveIcon.setAttribute("aria-hidden", "true");
+    saveBtn.appendChild(saveIcon);
+    timeBlockEl.appendChild(saveBtn);
 
-    // add event listener to saveBtn to save input to localStorage
-    saveBtn.addEventListener("click", function() {
-      // Get the text from the textInput
-      var textInputValue = textInput.value;
+    // Get the saved text from localStorage
+    var savedText = localStorage.getItem("hour-" + hour);
+    // Set the text of the textInput to the saved text
+    textInput.value = savedText;
 
-      // Save the text to localStorage
-      localStorage.setItem("hour-" + hour, textInputValue);
+    // Add the time-block element to the page
+    document.querySelector("#time-blocks").appendChild(timeBlockEl);
+  }
+}
 
-      // Get the saved text from localStorage
-      var savedText = localStorage.getItem("hour-" + hour);
+//set colour of timeblocks according to currentHr
+//define currentHr
+var currentHr = dayjs().hour();
 
-      // Set the text of the textInput to the saved text
-      textInput.value = savedText;
-    });
+// selected all elements with class time-block
+var timeBlocks = document.querySelectorAll(".time-block");
 
-      // Add the time-block element to the page
-      document.querySelector("#time-blocks").appendChild(timeBlockEl);
-  }};
+// for each time block, run function on timeBlock
+timeBlocks.forEach(function (timeBlock) {
+  //get hour of the timeBlock by splitting hour- from id on timeBlock
+  var timeBlockHr = parseInt(timeBlock.getAttribute("id").split("hour-")[1]);
 
+  // add present class is timeBlockHr equals currentHr
+  if (timeBlockHr === currentHr) {
+    timeBlock.classList.add("present");
+  }
+  // add past class is timeBlockHr is less than the currentHr
+  else if (timeBlockHr < currentHr) {
+    timeBlock.classList.add("past");
+  }
+  // add future class otherwise
+  else {
+    timeBlock.classList.add("future");
+  }
+});
 
-    //set colour of timeblocks according to currentHr
-    //define currentHr
-    var currentHr = dayjs().hour();
-    console.log(currentHr);
+//save text function
+function saveText(event) {
+  var textInput = event.target.previousSibling;
+  var textInputValue = textInput.value;
+  var timeBlockId = event.target.parentNode.getAttribute("id");
+  console.log("Timeblock:", timeBlockId);
+  console.log("Text Input: ", textInputValue);
+  localStorage.setItem(timeBlockId, textInputValue);
+  var savedText = localStorage.getItem(timeBlockId);
+  textInput.value = savedText;
+}
 
-    // selected all elements with class time-block
-    var timeBlocks = document.querySelectorAll(".time-block")
-
-    // for each time block, run function on timeBlock
-    timeBlocks.forEach(function(timeBlock) {
-        
-      //get hour of the timeBlock by splitting hour- from id on timeBlock
-      var timeBlockHr = parseInt(timeBlock.getAttribute("id").split("hour-")[1]);
-
-      // add present class is timeBlockHr equals currentHr
-      if (timeBlockHr === currentHr) {
-          timeBlock.classList.add("present");
-      }
-      // add past class is timeBlockHr is less than the currentHr
-      else if (timeBlockHr < currentHr) {
-          timeBlock.classList.add("past");
-      }
-      // add future class otherwise
-      else {
-          timeBlock.classList.add("future");
-      }
-    });
-
-    function saveText(event) {
-      var textInput = event.target.previousSibling;
-      var textInputValue = textInput.value;
-      var timeBlockId = event.target.parentNode.getAttribute("id");
-      localStorage.setItem(timeBlockId, textInputValue);
-      var savedText = localStorage.getItem(timeBlockId);
-      textInput.value = savedText;
+document
+  .querySelector("#time-blocks")
+  .addEventListener("click", function (event) {
+    if (event.target.matches(".saveBtn")) {
+      saveText(event);
     }
-    
-    document.querySelector("#time-blocks").addEventListener("click", function(event) {
-      if (event.target.matches(".saveBtn")) {
-        saveText(event);
-      }
-    });
-    
-
+  });
 });
